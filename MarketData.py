@@ -1,4 +1,5 @@
 import requests
+import json
 import sqlalchemy as db
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -35,6 +36,7 @@ headers = {
 response = requests.request("GET", url, headers=headers, params=querystring)
 response = response.json()
 
+
 engine = db.create_engine('sqlite:///Market_Data.db')
 for ticker in response:
     for i in range(0, len(response[ticker]["timestamp"])):
@@ -45,3 +47,27 @@ for ticker in response:
         dataframe["timestamp"] = pd.to_datetime(dataframe["timestamp"],
                                                 unit='s')
         dataframe.to_sql(ticker, con=engine, if_exists='append', index=False)
+
+
+# Recs
+def get_recs(symbol_lst=[]):
+    base_rec_url = "https://yfapi.net/v6/finance/recommendationsbysymbol/"
+    if symbol_lst == [] or type(symbol_lst) != list:
+        return
+
+    rec_dict = {}
+    for s in symbol_lst:
+        rec_url = base_rec_url + s.upper()
+        recs = requests.request("GET", rec_url,
+                                headers=headers)
+        recs.raise_for_status()
+        rec_dict[s] = recs.json()
+    return rec_dict
+
+
+q_string_recs = get_recs(symbol_lst=querystrings)
+
+for company in q_string_recs:
+    print(company)
+    print(json.dumps(q_string_recs[company], indent=4))
+    print()
