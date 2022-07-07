@@ -2,7 +2,7 @@
 
 This service aims to provide every user with the information they need to make better financial choices when it comes to investing in the stock market and cryptocurrency. 
 
-We will provide historical data, market trends, and possibly the charts themselves. We might also provide adjusted-for-inflation data and gdp estimates.
+We will provide historical data, portfolio recommendations, and easy-to-understand charts for each request. 
 
 
 ## Use
@@ -20,3 +20,11 @@ After recieving these inputs, it will:
 -     retrieve and print out recommended stocks to pair with the each respective company in your portfolio,
 
 -     provide a graphical representation of the stock's price at each interval on the given time range.
+
+
+## Future Features
+
+We plan on providing more features in the future, such as:
+
+- adjusted-for-inflation data,
+- gdp estimates.
