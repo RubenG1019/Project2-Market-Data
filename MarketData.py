@@ -50,7 +50,7 @@ for ticker in response:
 
 
 # Recs
-def get_recs(symbol_lst=[]):
+def get_recs(symbol_lst=[], print_recs=True):
     base_rec_url = "https://yfapi.net/v6/finance/recommendationsbysymbol/"
     if symbol_lst == [] or type(symbol_lst) != list:
         return
@@ -62,12 +62,14 @@ def get_recs(symbol_lst=[]):
                                 headers=headers)
         recs.raise_for_status()
         rec_dict[s] = recs.json()
+
+    if print_recs:
+        for company in rec_dict:
+            print(company)
+            print(json.dumps(rec_dict[company], indent=4))
+            print()
+
     return rec_dict
 
 
 q_string_recs = get_recs(symbol_lst=querystrings)
-
-for company in q_string_recs:
-    print(company)
-    print(json.dumps(q_string_recs[company], indent=4))
-    print()
