@@ -81,8 +81,9 @@ def info_statement():
         querystring +
         " or " +
         ticker.info['shortName'])
-    if ticker.info['quoteType'] == "CRYPTOCURRENCY":
 
+    if ticker.info['quoteType'] == "CRYPTOCURRENCY":
+        # User asked for info about a crypto currency
         print(Fore.YELLOW +
               Style.BRIGHT +
               ticker.info['shortName'] +
@@ -100,7 +101,9 @@ def info_statement():
             print(Fore.RED + Style.BRIGHT + "" + str(percentchange) + "%")
 
     else:
+        # User asked for info about a stock
         try:
+            # Print the name of the stock and its general information
             print(Fore.YELLOW +
                   Style.BRIGHT +
                   ticker.info['shortName'] +
@@ -116,7 +119,9 @@ def info_statement():
                   ticker.info['country'])
         except BaseException:
             print("", end="")
+
         try:
+            # Print the stock's current information
             print(Fore.YELLOW +
                   Style.BRIGHT +
                   ticker.info['shortName'] +
@@ -127,7 +132,9 @@ def info_statement():
                   " shares outstanding")
         except BaseException:
             print("", end="")
+
         try:
+            # Print the stock's rating
             print(
                 Fore.YELLOW +
                 Style.BRIGHT +
@@ -137,7 +144,9 @@ def info_statement():
                 " rating.\n")
         except BaseException:
             print("", end="")
+
         try:
+            # Print the stock's yearly change percentage
             if ticker.info['52WeekChange'] is not None:
                 print("Yearly Change: ", end='')
                 if ticker.info['52WeekChange'] > 0:
@@ -150,6 +159,7 @@ def info_statement():
             print("", end="")
 
         try:
+            # Print the change on the user-provided time interval/period/span
             if timeperiod != "1y":
                 print("Change over the " + timeperiod + " timespan: ", end='')
                 temp = hist['Close'].to_dict()
@@ -173,6 +183,7 @@ def info_statement():
             print("", end="")
 
         try:
+            # Print stock's Regular Market Volume
             if ticker.info['regularMarketVolume'] is not None:
                 print("Regular Market Volume: ", end='')
                 if ticker.info['regularMarketVolume'] >= 1000000:
@@ -182,23 +193,31 @@ def info_statement():
                     print(Fore.RED + Style.BRIGHT + "" +
                           str(ticker.info['regularMarketVolume']), end="")
                 print(
-                    " (Above 1 Million is ideal, lower means the stock lacks liquidity)\n")
+                    " (Above 1 Million is ideal,"
+                    " lower means the stock lacks liquidity)\n")
         except BaseException:
             print("", end="")
+
         try:
+            # Print stock's operating margin
             if ticker.info['operatingMargins'] is not None:
                 print("Operating Margin: ", end='')
                 if ticker.info['operatingMargins'] >= .15:
                     print(Fore.GREEN + Style.BRIGHT + "" +
-                          str(ticker.info['operatingMargins'] * 100) + "%", end="")
+                          str(ticker.info['operatingMargins'] * 100) + "%",
+                          end="")
                 else:
                     print(Fore.RED + Style.BRIGHT + "" +
-                          str(ticker.info['operatingMargins'] * 100) + "%", end="")
+                          str(ticker.info['operatingMargins'] * 100) + "%",
+                          end="")
                 print(
-                    " (Above 15% is ideal for most buisnesses, positive margins are a bare minimum)\n")
+                    " (Above 15% is ideal for most buisnesses, positive",
+                    " margins are a bare minimum)\n")
         except BaseException:
             print("", end="")
+
         try:
+            # Print the percentage of the stock that are held by institutions
             if ticker.info['heldPercentInstitutions'] is not None:
                 print("Institutional Holdership: ", end='')
                 if ticker.info['heldPercentInstitutions'] >= .20:
@@ -215,10 +234,15 @@ def info_statement():
                           str(ticker.info['heldPercentInstitutions'] *
                               100) +
                           "%", end="")
-                print(" (Percent of shares Institutions/Hedgefunds like BlackRock (Smart Money) are holding, these institutions have billions and thousands of analysts working for them anything above 20% is good)\n")
+                print(" (Percent of shares Institutions/Hedgefunds like"
+                      " BlackRock (Smart Money) are holding, these"
+                      " institutions have billions and thousands of analysts"
+                      " working for them anything above 20% is good)\n")
         except BaseException:
             print("", end="")
+
         try:
+            # Print percentage of shares that are shorted
             if ticker.info['shortPercentOfFloat'] is not None:
                 print("Percentage of shares short: ", end='')
                 if ticker.info['shortPercentOfFloat'] < .20:
@@ -235,10 +259,14 @@ def info_statement():
                           str(ticker.info['shortPercentOfFloat'] *
                               100) +
                           "%", end="")
-                print(" (Long story short, less is good, the higher this percentage the more the Smart Money think this stock is overvalued under 20% good.)\n")
+                print(" (Long story short, less is good, the higher this"
+                      " percentage the more the Smart Money think this stock"
+                      " is overvalued under 20% good.)\n")
         except BaseException:
             print("", end="")
+
         try:
+            # Print the stock's earning ratio
             if ticker.info['trailingPE'] is not None:
                 print("Price to Earning Ratio: ", end='')
                 if ticker.info['trailingPE'] <= 25:
@@ -247,10 +275,14 @@ def info_statement():
                 else:
                     print(Fore.RED + Style.BRIGHT + "" +
                           str(ticker.info['trailingPE']), end="")
-                print(" (If price to earning ratio is over 25 the stock is likely overvalued far under means its undervalued, useful metric for value investing)\n")
+                print(" (If price to earning ratio is over 25 the stock is"
+                      " likely overvalued far under means its undervalued,"
+                      " useful metric for value investing)\n")
         except BaseException:
             print("", end="")
+
         try:
+            # Print the stock's dividends
             if ticker.info['dividendYield'] is not None:
                 if ticker.info['trailingPE'] <= 25:
                     print(Fore.GREEN +
@@ -269,7 +301,10 @@ def info_statement():
                     ticker.info['shortName'] +
                     " does not give out a dividend",
                     end='')
-            print(" (Dividends are like a gift companies give to their investors for holding shares of their stock. They are programmed a certain number of times a year and pay you a set percentage of the current share price)\n")
+            print(" (Dividends are like a gift companies give to their"
+                  " investors for holding shares of their stock. They are"
+                  " programmed a certain number of times a year and pay you a"
+                  " set percentage of the current share price)\n")
         except BaseException:
             print("", end="")
 
