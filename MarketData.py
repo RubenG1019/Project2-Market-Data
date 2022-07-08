@@ -445,7 +445,7 @@ query_result = engine.execute(
     ";").fetchall()
 
 datadict = pd.DataFrame(query_result)
-datadict.set_index(0, inplace=True)
+# datadict.set_index(0, inplace=True)
 
 datadict.plot(figsize=(16, 9))
 plt.xlabel('Date')
