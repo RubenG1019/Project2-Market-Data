@@ -10,22 +10,27 @@ from colorama import Fore, Back, Style
 
 colorama.init(autoreset=True)
 
-print(Fore.RED + Style.BRIGHT + "Not financial advise, invest at your own risk.")
-print(
-    Fore.RED +
-    Style.BRIGHT +
-    "Note: Longer timeframes are more indicative of general trends, looking at what a stock does in 5 min intervals during the day wont reflect how it reacts next week")
+# Warnings for user
+print(Fore.RED + Style.BRIGHT +
+      "Not financial advise, invest at your own risk.")
+print(Fore.RED + Style.BRIGHT +
+      "Note: Longer timeframes are more indicative of general trends, "
+      "looking at what a stock does in 5 min intervals during the day "
+      "wont reflect how it reacts next week")
+
+# Prompt user for stock, time interval, and range
 inputstring = str(input(
-    "Input a ticker symbol you would like to know more about (Ex: aapl, jpm, btc-usd, msft):\n"))
+    "Input a ticker symbol you would like to know more about"
+    " (Ex: aapl, jpm, btc-usd, msft):\n"))
 querystring = inputstring.upper()
-timeperiod = input(
-    "Enter a time period (Ex: 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max):\n")
-timeinterval = input(
-    "Enter a time interval (Ex: 1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 1d, 5d, 1wk, 1mo, 3mo):\n")
+timeperiod = input("Enter a time period "
+                   "(Ex: 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max):\n")
+timeinterval = input("Enter a time interval "
+                     "(Ex: 1m, 2m, 5m, 15m, 30m, 60m, 90m, "
+                     "1h, 1d, 5d, 1wk, 1mo, 3mo):\n")
 
-engine = db.create_engine('sqlite:///Market_Data.db')
 
-
+# Create ticker object for given stock, used  for retrieving all stock info
 ticker = yf.Ticker(querystring)
 # get historical market data
 hist = ticker.history(period=timeperiod, interval=timeinterval)
@@ -34,13 +39,13 @@ if 'index' in hist:
     hist.rename(columns={'index': 'Date'}, inplace=True)
 if 'Datetime' in hist:
     hist.rename(columns={'Datetime': 'Date'}, inplace=True)
-hist.to_sql(
-    querystring.replace(
-        "-",
-        ""),
-    con=engine,
-    if_exists='replace',
-    index=False)
+
+
+# Create SQL database to store data in
+engine = db.create_engine('sqlite:///Market_Data.db')
+# store historical data in SQL database
+hist.to_sql(querystring.replace("-", ""), con=engine,
+            if_exists='replace', index=False)
 
 
 def get_recs(symbol, print_recs=True):
@@ -57,11 +62,14 @@ def get_recs(symbol, print_recs=True):
     recs.raise_for_status()
     rec_dict[symbol] = recs.json()
 
-    print('Recommended stocks given your prefrences:', end=" ")
+    if print_recs:
+        print('Recommended stocks given your prefrences:', end=" ")
+        r = rec_dict[querystring]['finance']['result'][0]['recommendedSymbols']
+        for ticker in r:
+            print(Fore.CYAN + Style.BRIGHT + ticker['symbol'], end=" ")
+        print()
 
-    for ticker in rec_dict[querystring]['finance']['result'][0]['recommendedSymbols']:
-        print(Fore.CYAN + Style.BRIGHT + ticker['symbol'], end=" ")
-    print()
+    return rec_dict
 
 
 def get_usinflation():
@@ -383,7 +391,9 @@ else:
         str(percentchange) +
         "%")
 print()
-print("In general stocks follow the trend of the index they fall under (tech stocks like AAPL(Apple) fall under the NASDAQ) if the major indices are down most stocks will follow.")
+print("In general stocks follow the trend of the index they fall under "
+      "(tech stocks like AAPL(Apple) fall under the NASDAQ) if the major "
+      "indices are down most stocks will follow.")
 print()
 inflationdata = get_usinflation()
 
@@ -421,7 +431,9 @@ else:
         str(inflationdata[-1]['monthly_rate_pct']) +
         "%")
 print()
-print("High inflation rates are followed by higher intrest rates, high intrest rates devalues stock, therefore high inflation rates are bad for the stock market")
+print("High inflation rates are followed by higher intrest rates, "
+      "high intrest rates devalues stock, therefore high inflation "
+      "rates are bad for the stock market")
 print()
 get_recs(querystring)
 
