@@ -334,4 +334,8 @@ if overwrite:
 data = hist[["Date", "Open"]]
 
 plt.plot(data["Date"], data["Open"])
+plt.title(ticker.info['shortName'] + ' Performance '
+          'over ' + timeperiod)
+plt.ylabel('Price ($)')
+plt.xlabel('Date')
 plt.show()
