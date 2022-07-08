@@ -64,6 +64,15 @@ def get_recs(symbol, print_recs=True):
     print()
 
 
+def get_usinflation():
+    tp = 'CPI'
+    api_url = 'https://api.api-ninjas.com/v1/inflation?type={}'.format(tp)
+    response = requests.get(
+        api_url, headers={
+            'X-Api-Key': 'DHYTMZd4WuLvBig6WTIL7A==VlveuMZSuKschXBi'})
+    return response.json()
+
+
 def info_statement():
     print(
         Fore.YELLOW +
@@ -180,10 +189,10 @@ def info_statement():
             if ticker.info['operatingMargins'] is not None:
                 print("Operating Margin: ", end='')
                 if ticker.info['operatingMargins'] >= .15:
-                    print(Fore.GREEN + Style.BRIGHT + "" + \
+                    print(Fore.GREEN + Style.BRIGHT + "" +
                           str(ticker.info['operatingMargins'] * 100) + "%", end="")
                 else:
-                    print(Fore.RED + Style.BRIGHT + "" + \
+                    print(Fore.RED + Style.BRIGHT + "" +
                           str(ticker.info['operatingMargins'] * 100) + "%", end="")
                 print(
                     " (Above 15% is ideal for most buisnesses, positive margins are a bare minimum)\n")
@@ -266,8 +275,120 @@ def info_statement():
 
 
 info_statement()
-q_string_recs = get_recs(querystring)
 
+print(
+    Fore.YELLOW +
+    Style.BRIGHT +
+    "US Major Market Indices during the " +
+    timeperiod +
+    " timeframe:\n")
+
+print("NASDAQ: ", end='')
+
+tick1 = yf.Ticker("^IXIC")
+hist1 = tick1.history(period=timeperiod)
+hist1 = hist1.reset_index(level=0)
+temp1 = hist1['Close'].to_dict()
+percentchange = ((temp1[len(temp1) - 1] - temp1[0]) / temp1[0]) * 100
+if percentchange > 0:
+    print(
+        Fore.GREEN +
+        Style.BRIGHT +
+        "" +
+        str(percentchange) +
+        "%")
+else:
+    print(
+        Fore.RED +
+        Style.BRIGHT +
+        "" +
+        str(percentchange) +
+        "%")
+
+
+print("S&P 500: ", end='')
+tick1 = yf.Ticker("^GSPC")
+hist1 = tick1.history(period=timeperiod)
+hist1 = hist1.reset_index(level=0)
+temp1 = hist1['Close'].to_dict()
+percentchange = ((temp1[len(temp1) - 1] - temp1[0]) / temp1[0]) * 100
+if percentchange > 0:
+    print(
+        Fore.GREEN +
+        Style.BRIGHT +
+        "" +
+        str(percentchange) +
+        "%")
+else:
+    print(
+        Fore.RED +
+        Style.BRIGHT +
+        "" +
+        str(percentchange) +
+        "%")
+
+print("DOW Jones: ", end='')
+tick1 = yf.Ticker("^DJI")
+hist1 = tick1.history(period=timeperiod)
+hist1 = hist1.reset_index(level=0)
+temp1 = hist1['Close'].to_dict()
+percentchange = ((temp1[len(temp1) - 1] - temp1[0]) / temp1[0]) * 100
+if percentchange > 0:
+    print(
+        Fore.GREEN +
+        Style.BRIGHT +
+        "" +
+        str(percentchange) +
+        "%")
+else:
+    print(
+        Fore.RED +
+        Style.BRIGHT +
+        "" +
+        str(percentchange) +
+        "%")
+print()
+print("In general stocks follow the trend of the index they fall under (tech stocks like AAPL(Apple) fall under the NASDAQ) if the major indices are down most stocks will follow.")
+print()
+inflationdata = get_usinflation()
+
+print(Fore.YELLOW + Style.BRIGHT + "Inflation Data US for the " +
+      inflationdata[-1]['period'] + ":\n")
+print("Yearly Rate: ", end="")
+if inflationdata[-1]['yearly_rate_pct'] < 2.5:
+    print(
+        Fore.GREEN +
+        Style.BRIGHT +
+        "" +
+        str(inflationdata[-1]['yearly_rate_pct']) +
+        "%")
+else:
+    print(
+        Fore.RED +
+        Style.BRIGHT +
+        "" +
+        str(inflationdata[-1]['yearly_rate_pct']) +
+        "%")
+
+print("Monthly Rate: ", end="")
+if inflationdata[-1]['monthly_rate_pct'] < 0:
+    print(
+        Fore.GREEN +
+        Style.BRIGHT +
+        "" +
+        str(inflationdata[-1]['monthly_rate_pct']) +
+        "%")
+else:
+    print(
+        Fore.RED +
+        Style.BRIGHT +
+        "" +
+        str(inflationdata[-1]['monthly_rate_pct']) +
+        "%")
+print()
+print("High inflation rates are followed by higher intrest rates, high intrest rates devalues stock, therefore high inflation rates are bad for the stock market")
+print()
+get_recs(querystring)
 
 query_result = engine.execute(
     "SELECT Date,Close FROM " +
@@ -278,4 +399,10 @@ query_result = engine.execute(
 
 datadict = pd.DataFrame(query_result)
 datadict.set_index(0, inplace=True)
-# in pep 8
+
+datadict.plot(figsize=(16, 9))
+plt.xlabel('Date')
+plt.ylabel('Price')
+plt.savefig(querystring + ".png")
+plt.ioff()
+plt.show(block=False)
